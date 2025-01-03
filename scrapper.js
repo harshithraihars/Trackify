@@ -23,9 +23,13 @@
 // })();
 
 const express = require("express");
+const dotenv=require("dotenv")
+const cron=require("node-cron")
 const cors = require("cors");
+dotenv.config({})
 const router = require("./route/productRoute");
 const connectDb = require("./db/connectdb");
+const { periodicCheck } = require("./periodic");
 
 const app = express();
 
@@ -44,6 +48,10 @@ connectDb()
     // Start the server only after successful DB connection
     app.listen(PORT, () => {
       console.log(`Listening on port ${PORT}...`);
+      cron.schedule('* * * * *', () => {
+        console.log("Running periodic check...");
+        periodicCheck();  // Run the function every minute
+      });
     });
   })
   .catch((err) => {

@@ -24,8 +24,8 @@ const getAllProducts = async (req, res) => {
 const removeProduct = async (req, res) => {
     try {
       const { product_name } = req.body;
-      const deletedProduct = await productModel.findOneAndDelete({ product_name });
-  
+      const deletedProduct = await productModel.findOneAndDelete({ product_name:product_name });
+      
       if (!deletedProduct) {
         return res.status(404).json({ message: "Product not found" });
       }
