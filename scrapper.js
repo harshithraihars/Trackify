@@ -26,7 +26,7 @@ connectDb()
     // Start the server only after successful DB connection
     app.listen(PORT, () => {
       console.log(`Listening on port ${PORT}...`);
-      cron.schedule('* * * * *', () => {
+      cron.schedule('0 */6 * * *', () => {
         console.log("Running periodic check...");
         periodicCheck();  // Run the function every minute
       });
