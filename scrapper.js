@@ -12,8 +12,8 @@ const { periodicCheck } = require("./periodic");
 const app = express();
 
 // Use CORS and JSON parsing middleware before defining routes
-app.use(cors()); // Enable cross-origin requests
-app.use(express.json()); // Parse JSON bodies for incoming requests
+app.use(cors()); 
+app.use(express.json()); 
 
 // Define routes
 app.use("/", router);
