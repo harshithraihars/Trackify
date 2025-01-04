@@ -1,32 +1,35 @@
-require("dotenv").config(); // Load environment variables from the .env file
+require("dotenv").config(); // Load environment variables
 const nodemailer = require("nodemailer");
-const puppeteer = require("puppeteer"); // Full Puppeteer package
+const puppeteer = require("puppeteer-core");
+const chrome = require("chrome-aws-lambda");
 const productModel = require("./Schema/productSchema");
 
-const checkPriceDrop = (product) => {
-  (async () => {
-    let chrome=require("chrome-aws-lambda")
+const checkPriceDrop = async (product) => {
+  try {
+    // Launch Puppeteer with chrome-aws-lambda
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath:await chrome.executablePath, // Use the dynamic executablePath
+      args: chrome.args,
+      executablePath: await chrome.executablePath,
+      defaultViewport: chrome.defaultViewport,
     });
 
     const url = product.product_url;
     const page = await browser.newPage();
 
-    // Go to the specified URL and wait until the page is loaded
-    await page.goto(url, { waitUntil: "load", timeout: 0 });
+    // Navigate to the product URL
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 0 });
 
-    const priceSelector = ".CxhGGd";
+    const priceSelector = ".CxhGGd"; // Adjust this selector based on your target page
     const price = await page.$eval(priceSelector, (el) => el.innerText);
     const actual_price = parseFloat(price.replace(/[₹,]/g, ""));
 
+    console.log(`Current Price of ${product.product_name}: ₹${actual_price}`);
+
     if (actual_price <= product.price_limit) {
-      console.log("Email sent successfully");
-      console.log("finally");
-      
-      // Configure the email transporters
+      console.log(`Price drop detected for ${product.product_name}, sending email...`);
+
+      // Configure Nodemailer transport
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -37,37 +40,43 @@ const checkPriceDrop = (product) => {
 
       const mailOptions = {
         from: process.env.EMAIL,
-        to: "sigmaharshrai@gmail.com", // You can customize this to the user’s email
+        to: "sigmaharshrai@gmail.com", // Change this to the recipient’s email
         subject: `Price Alert: ${product.product_name}`,
         text: `Hello,
 
-            The price of "${product.product_name}" has reached your desired limit!
+        The price of "${product.product_name}" has reached your desired limit!
 
-            Current Price: ₹${actual_price}
-            Price Limit: ₹${product.price_limit}
+        Current Price: ₹${actual_price}
+        Price Limit: ₹${product.price_limit}
 
-            Thank you for using our Price Tracker service.
+        Thank you for using our Price Tracker service.
 
-            Best regards,
-            The Price Tracker Team`,
+        Best regards,
+        The Price Tracker Team`,
       };
 
-      try {
-        const info = await transporter.sendMail(mailOptions);
-      } catch (error) {
-        console.log("Error sending email:", error.message);
-      }
+      // Send the email
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent successfully:", info.response);
     }
 
     await browser.close();
-  })();
+  } catch (error) {
+    console.error("Error in checkPriceDrop:", error.message);
+  }
 };
 
 const periodicCheck = async () => {
-  const products = await productModel.find();
-  products.map((product) => {
-    checkPriceDrop(product);
-  });
+  try {
+    console.log("Running periodic check...");
+    const products = await productModel.find(); // Fetch all products from the database
+    products.map((product) => {
+      checkPriceDrop(product); // Check price drop for each product
+    });
+  } catch (error) {
+    console.error("Error during periodic check:", error.message);
+  }
 };
 
 module.exports = { periodicCheck };
+
