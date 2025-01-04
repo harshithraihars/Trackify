@@ -10,7 +10,7 @@ const checkPriceDrop = async (product) => {
     const browser = await puppeteer.launch({
       headless: true,
       args: chrome.args,
-      executablePath: await chrome.executablePath,
+      executablePath: await chrome.executablePath(),
       defaultViewport: chrome.defaultViewport,
     });
 
