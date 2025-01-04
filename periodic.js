@@ -24,7 +24,8 @@ const checkPriceDrop = (product) => {
 
     if (actual_price <= product.price_limit) {
       console.log("Email sent successfully");
-
+      console.log(:finally);
+      
       // Configure the email transporters
       const transporter = nodemailer.createTransport({
         service: "gmail",
