@@ -1,36 +1,45 @@
+require("dotenv").config(); // Load environment variables from the .env file
 const nodemailer = require("nodemailer");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer"); // Full Puppeteer package
 const productModel = require("./Schema/productSchema");
+
 const checkPriceDrop = (product) => {
   (async () => {
-    // connecting to the browser
+    let executablePath = "";
+
+    // If running locally, Puppeteer will automatically use the installed Chromium, no need to specify executablePath
+    // If running in Render (or another server), specify the correct executablePath
+    // if (process.env.NODE_ENV === "development") {
+    //   executablePath = puppeteer.executablePath();  // Automatically fetches the local path
+    // } else {
+    //   executablePath = "/opt/render/.cache/puppeteer/chrome"; // Custom path for Render
+    // }
+    executablePath = "/opt/render/.cache/puppeteer/chrome";
     const browser = await puppeteer.launch({
       headless: true,
-      args: [
-        '--no-sandbox', // Required in many cloud environments
-        '--disable-setuid-sandbox',
-      ],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath: executablePath, // Use the dynamic executablePath
     });
+
     const url = product.product_url;
     const page = await browser.newPage();
-    //   goes to the specified url wait untill the browser is loaded
+
+    // Go to the specified URL and wait until the page is loaded
     await page.goto(url, { waitUntil: "load", timeout: 0 });
 
     const priceSelector = ".CxhGGd";
     const price = await page.$eval(priceSelector, (el) => el.innerText);
     const actual_price = parseFloat(price.replace(/[₹,]/g, ""));
-    //   const imageSelector = '.jLEJ7H';
-    //   await page.waitForSelector(imageSelector);
 
-    // Get the 'src' attribute of the image
-    //   const imageSrc = await page.$eval(imageSelector, img => img.src);    
     if (actual_price <= product.price_limit) {
-      console.log("email sent succesfully")
+      console.log("Email sent successfully");
+
+      // Configure the email transporters
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: process.env.EMAIL,
-          pass: process.env.PASSWORD,
+          user: process.env.EMAIL, // Use the email from the .env file
+          pass: process.env.PASSWORD, // Use the password from the .env file
         },
       });
 
@@ -39,14 +48,14 @@ const checkPriceDrop = (product) => {
         to: "sigmaharshrai@gmail.com", // You can customize this to the user’s email
         subject: `Price Alert: ${product.product_name}`,
         text: `Hello,
-            
+
             The price of "${product.product_name}" has reached your desired limit!
-            
+
             Current Price: ₹${actual_price}
             Price Limit: ₹${product.price_limit}
-            
+
             Thank you for using our Price Tracker service.
-            
+
             Best regards,
             The Price Tracker Team`,
       };
@@ -61,10 +70,12 @@ const checkPriceDrop = (product) => {
     await browser.close();
   })();
 };
+
 const periodicCheck = async () => {
   const products = await productModel.find();
   products.map((product) => {
     checkPriceDrop(product);
   });
 };
+
 module.exports = { periodicCheck };
