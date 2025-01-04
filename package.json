@@ -4,6 +4,7 @@
   "description": "A Node.js backend server",
   "main": "scrapper.js",
   "scripts": {
+    "postinstall": "./install_chromium.sh",
   "start": "node scrapper.js",
   "dev": "nodemon scrapper.js"
 }
