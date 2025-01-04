@@ -20,10 +20,7 @@ const checkPriceDrop = (product) => {
     //   await page.waitForSelector(imageSelector);
 
     // Get the 'src' attribute of the image
-    //   const imageSrc = await page.$eval(imageSelector, img => img.src);
-    console.log(
-      `The price of the product is ${actual_price}, limit price is ${product.price_limit}`
-    );
+    //   const imageSrc = await page.$eval(imageSelector, img => img.src);    
     if (actual_price <= product.price_limit) {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -57,7 +54,6 @@ const checkPriceDrop = (product) => {
       }
     }
 
-    //   console.log(imageSrc)
     await browser.close();
   })();
 };
