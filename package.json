@@ -5,8 +5,7 @@
   "main": "scrapper.js",
   "scripts": {
   "start": "node scrapper.js",
-  "dev": "nodemon scrapper.js",
-  "postinstall": "./install_chromium.sh"
+  "dev": "nodemon scrapper.js"
 }
 ,
   "keywords": [],
