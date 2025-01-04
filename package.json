@@ -4,9 +4,11 @@
   "description": "A Node.js backend server",
   "main": "scrapper.js",
   "scripts": {
-    "start": "node scrapper.js",
-    "dev": "nodemon scrapper.js"
-  },
+  "start": "node scrapper.js",
+  "dev": "nodemon scrapper.js",
+  "postinstall": "./install_chromium.sh"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
