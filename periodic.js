@@ -11,11 +11,9 @@ const checkPriceDrop = async (product) => {
     console.log(expath);
     
     // Launch Puppeteer with chrome-aws-lambda
-    const browser = await puppeteer_core.launch({
+    const browser = await puppeter.launch({
       headless: true,
-      args: chrome.args,
-      executablePath: expath,
-      defaultViewport: chrome.defaultViewport,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     const url = product.product_url;
