@@ -9,7 +9,7 @@ const checkPriceDrop = (product) => {
     const browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath:chrome.executablePath, // Use the dynamic executablePath
+      executablePath:await chrome.executablePath, // Use the dynamic executablePath
     });
 
     const url = product.product_url;
