@@ -1,16 +1,20 @@
 require("dotenv").config(); // Load environment variables
 const nodemailer = require("nodemailer");
-const puppeteer = require("puppeteer-core");
+const puppeteer_core = require("puppeteer-core");
+const puppeter=require("puppeteer")
 const chrome = require("chrome-aws-lambda");
 const productModel = require("./Schema/productSchema");
 
 const checkPriceDrop = async (product) => {
   try {
+    const expath=await chrome.executablePath
+    console.log(expath);
+    
     // Launch Puppeteer with chrome-aws-lambda
-    const browser = await puppeteer.launch({
+    const browser = await puppeteer_core.launch({
       headless: true,
       args: chrome.args,
-      executablePath: await chrome.executablePath(),
+      executablePath: expath,
       defaultViewport: chrome.defaultViewport,
     });
 
@@ -25,10 +29,8 @@ const checkPriceDrop = async (product) => {
     const actual_price = parseFloat(price.replace(/[₹,]/g, ""));
 
     console.log(`Current Price of ${product.product_name}: ₹${actual_price}`);
-
+    
     if (actual_price <= product.price_limit) {
-      console.log(`Price drop detected for ${product.product_name}, sending email...`);
-
       // Configure Nodemailer transport
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -57,7 +59,7 @@ const checkPriceDrop = async (product) => {
 
       // Send the email
       const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent successfully:", info.response);
+      console.log("Email sent successfully:");
     }
 
     await browser.close();
