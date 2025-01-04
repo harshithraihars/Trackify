@@ -5,20 +5,11 @@ const productModel = require("./Schema/productSchema");
 
 const checkPriceDrop = (product) => {
   (async () => {
-    let executablePath = "";
-
-    // If running locally, Puppeteer will automatically use the installed Chromium, no need to specify executablePath
-    // If running in Render (or another server), specify the correct executablePath
-    // if (process.env.NODE_ENV === "development") {
-    //   executablePath = puppeteer.executablePath();  // Automatically fetches the local path
-    // } else {
-    //   executablePath = "/opt/render/.cache/puppeteer/chrome"; // Custom path for Render
-    // }
-    executablePath = "/opt/render/.cache/puppeteer/chrome";
+    let chrome=require("chrome-aws-lambda")
     const browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath:'/usr/bin/chromium-browser', // Use the dynamic executablePath
+      executablePath:chrome.executablePath(), // Use the dynamic executablePath
     });
 
     const url = product.product_url;

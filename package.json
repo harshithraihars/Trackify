@@ -4,15 +4,14 @@
   "description": "A Node.js backend server",
   "main": "scrapper.js",
   "scripts": {
-    "postinstall": "./install_chromium.sh",
-  "start": "node scrapper.js",
-  "dev": "nodemon scrapper.js"
-}
-,
+    "start": "node scrapper.js",
+    "dev": "nodemon scrapper.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chrome-aws-lambda": "^10.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
