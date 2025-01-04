@@ -1,12 +1,15 @@
 const nodemailer = require("nodemailer");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const productModel = require("./Schema/productSchema");
 const checkPriceDrop = (product) => {
   (async () => {
     // connecting to the browser
     const browser = await puppeteer.launch({
-      executablePath:
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // Correctly escaped path
+      headless: true,
+      args: [
+        '--no-sandbox', // Required in many cloud environments
+        '--disable-setuid-sandbox',
+      ],
     });
     const url = product.product_url;
     const page = await browser.newPage();
@@ -22,6 +25,7 @@ const checkPriceDrop = (product) => {
     // Get the 'src' attribute of the image
     //   const imageSrc = await page.$eval(imageSelector, img => img.src);    
     if (actual_price <= product.price_limit) {
+      console.log("email sent succesfully")
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
