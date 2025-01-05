@@ -7,6 +7,7 @@ const productModel = require("./Schema/productSchema");
 
 const checkPriceDrop = async (product) => {
   try {
+    console.log(process.env.executablePath);
     
     // Launch Puppeteer with chrome-aws-lambda
     const browser = await puppeter.launch({
