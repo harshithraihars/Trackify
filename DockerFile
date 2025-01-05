@@ -1,0 +1,20 @@
+FROM ghcr.io/puppeteer/puppeteer:23.11.1
+
+# Environment variable to skip Chromium download and specify the executable path
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json for dependency installation
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of the application code
+COPY . .
+
+# Command to run the scrapper script
+CMD ["node", "scrapper.js"]

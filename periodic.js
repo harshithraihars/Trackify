@@ -7,13 +7,12 @@ const productModel = require("./Schema/productSchema");
 
 const checkPriceDrop = async (product) => {
   try {
-    const expath=await chrome.executablePath
-    console.log(expath);
     
     // Launch Puppeteer with chrome-aws-lambda
     const browser = await puppeter.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: ["--no-sandbox", "--disable-setuid-sandbox","--single-process","--no-zygote"],
+      executablePath:process.env.PUPPETEER_EXECUTABLE_PATH
     });
 
     const url = product.product_url;
