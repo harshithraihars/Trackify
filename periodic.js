@@ -1,25 +1,36 @@
 require("dotenv").config(); // Load environment variables
 const nodemailer = require("nodemailer");
-const puppeteer_core = require("puppeteer-core");
-const puppeter=require("puppeteer")
+const puppeteer = require("puppeteer-core");
 const chrome = require("chrome-aws-lambda");
 const productModel = require("./Schema/productSchema");
 
 const checkPriceDrop = async (product) => {
   try {
-    console.log(process.env.executablePath);
-    
+    console.log("Starting price check for:", product.product_name);
+
+    // Determine the executable path for Puppeteer
+    const executablePath =
+      (await chrome.executablePath) || process.env.PUPPETEER_EXECUTABLE_PATH;
+
+    if (!executablePath) {
+      throw new Error("Chromium executable path is not set.");
+    }
+
+    console.log("Using Chromium executable path:", executablePath);
+
     // Launch Puppeteer with chrome-aws-lambda
-    const browser = await puppeter.launch({
+    const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox","--single-process","--no-zygote"],
-      executablePath:process.env.PUPPETEER_EXECUTABLE_PATH
+      args: chrome.args,
+      executablePath: executablePath,
+      defaultViewport: chrome.defaultViewport,
     });
 
-    const url = product.product_url;
     const page = await browser.newPage();
+    const url = product.product_url;
 
     // Navigate to the product URL
+    console.log("Navigating to URL:", url);
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 0 });
 
     const priceSelector = ".CxhGGd"; // Adjust this selector based on your target page
@@ -27,7 +38,7 @@ const checkPriceDrop = async (product) => {
     const actual_price = parseFloat(price.replace(/[₹,]/g, ""));
 
     console.log(`Current Price of ${product.product_name}: ₹${actual_price}`);
-    
+
     if (actual_price <= product.price_limit) {
       // Configure Nodemailer transport
       const transporter = nodemailer.createTransport({
@@ -57,7 +68,7 @@ const checkPriceDrop = async (product) => {
 
       // Send the email
       const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent successfully:");
+      console.log("Email sent successfully:", info.messageId);
     }
 
     await browser.close();
@@ -68,15 +79,17 @@ const checkPriceDrop = async (product) => {
 
 const periodicCheck = async () => {
   try {
-    console.log("Running periodic check...");
+    console.log("Running periodic price check...");
     const products = await productModel.find(); // Fetch all products from the database
-    products.map((product) => {
-      checkPriceDrop(product); // Check price drop for each product
-    });
+
+    for (const product of products) {
+      await checkPriceDrop(product); // Check price drop for each product
+    }
   } catch (error) {
     console.error("Error during periodic check:", error.message);
   }
 };
 
 module.exports = { periodicCheck };
+
 
