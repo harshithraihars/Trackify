@@ -1,17 +1,22 @@
 const nodemailer = require("nodemailer");
 const puppeteer = require("puppeteer-core");
+const chromium = require("@sparticuz/chromium-min");
 const productModel = require("./Schema/productSchema");
 const checkPriceDrop = (product) => {
   (async () => {
     // connecting to the browser
+    const islocal=process.env.CHROME_EXECUTABLE_PATH
     const browser = await puppeteer.launch({
-      executablePath:
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // Correctly escaped path
+      args: islocal?puppeteer.defaultArgs() :[...chromium.args,'--hide-scrollbars','--incognito','--no-sandbox'],
+      defaultViewport: chromium.defaultViewport,
+      executablePath: process.env.CHROME_EXECUTABLE_PATH || await chromium.executablePath('https://my-media-assets.s3.amazonaws.com/chromium-v126.0.0-pack.tar'),
+      headless: chromium.headless,
     });
     const url = product.product_url;
+  
     const page = await browser.newPage();
-    //   goes to the specified url wait untill the browser is loaded
-    await page.goto(url, { waitUntil: "load", timeout: 0 });
+    await page.goto(url);
+
 
     const priceSelector = ".CxhGGd";
     const price = await page.$eval(priceSelector, (el) => el.innerText);
