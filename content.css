@@ -1,0 +1,108 @@
+/* .price-alert-button {
+  width: 300px;
+  padding: 12px 20px; */
+  /* background: linear-gradient(135deg, #59e75e, #6beb72); Gradient green */
+  /* color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  letter-spacing: 0.5px; */
+/* } */
+
+/* .price-alert-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+  background: linear-gradient(135deg, #45A049, #2E7D32);
+} */
+
+/* .price-alert-button:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.price-limit-input {
+  width: 300px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #f9f9f9;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.price-limit-input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  background-color: #fff;
+}  */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 20px;
+}
+
+.hidden{
+    display: none;
+}
+/* BUTTON STYLES */
+.price-alert-button {
+  width: 220px;
+  padding: 9px 16px;
+  background: linear-gradient(135deg, #59e75e, #6beb72);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
+  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+  letter-spacing: 0.4px;
+}
+
+.price-alert-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 14px rgba(76, 175, 80, 0.4);
+  background: linear-gradient(135deg, #45A049, #2E7D32);
+}
+
+.price-alert-button:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* INPUT STYLES */
+.price-limit-input {
+  width: 220px;
+  padding: 9px 11px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #f9f9f9;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.price-limit-input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  background-color: #fff;
+}
